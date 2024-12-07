@@ -48,7 +48,7 @@ const ChatHD = () => {
     const [imageInput, setImageInput] = useState<File | null>(null);
     const [response, setResponse] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
+    const [imageBase64, setImageBase64] = useState<string | null>(null); // Lưu trữ ảnh đã mã hóa
     const debouncedTextInput = useDebounce(textInput, 500); // Delay 500ms cho input
 
     const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +60,12 @@ const ChatHD = () => {
         if (file) {
             setImageInput(file);
         }
+    };
+
+    // Handle image delete
+    const handleImageDelete = () => {
+        setImageInput(null);
+        setImageBase64(null); // Xóa ảnh đã tải lên
     };
 
     const handleSendMessage = async () => {
@@ -119,9 +125,11 @@ const ChatHD = () => {
     };
 
     return (
-        <Box sx={{ padding: 2, margin: "0 auto" }}>
-            <Box sx={{ marginBottom: 2 }}>
-                <Typography variant="h6">Chat with API</Typography>
+        <Box sx={{ padding: 2, margin: "0 auto", textAlign: "center" }}>
+            <Box sx={{ marginBottom: 2, textAlign: "center" }}>
+                <Typography variant="h6" sx={{ fontSize: 36 }}>
+                    Chat with HD Bank AI
+                </Typography>
             </Box>
 
             {/* <TextField
@@ -148,22 +156,64 @@ const ChatHD = () => {
             />
 
             {/* Input ảnh */}
-            <input
-                type="file"
-                className="py-2 px-4 my-2 w-10 bg-white rounded-lg border border-gray-300"
-                accept="image/*"
-                onChange={handleImageChange}
-                style={{ marginBottom: "16px" }}
-            />
+            <Box
+                sx={{ textAlign: "center", marginBottom: 2, padding: "20px 0" }}
+            >
+                <Button
+                    variant="outlined"
+                    component="label"
+                    sx={{
+                        padding: "10px 20px",
+                        borderRadius: "20px",
+                        borderColor: "#1976d2",
+                        color: "#1976d2",
+                        "&:hover": {
+                            borderColor: "#115293",
+                            color: "#115293",
+                        },
+                    }}
+                >
+                    Upload Image
+                    <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        onChange={handleImageChange}
+                    />
+                </Button>
+            </Box>
 
             {/* Hiển thị tên file ảnh */}
             {imageInput && (
-                <Typography variant="body2">
-                    Selected Image: {imageInput.name}
-                </Typography>
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        paddingBottom: 4,
+                    }}
+                >
+                    <Typography variant="body2">
+                        Selected Image: {imageInput.name}
+                    </Typography>
+                    <button
+                        style={{
+                            color: "red",
+                            border: "none",
+                            marginLeft: "10px",
+                            borderRadius: "10px",
+                            padding: "10px 14px",
+                        }}
+                        onClick={() => {
+                            setImageInput(null);
+                        }}
+                    >
+                        Xóa
+                    </button>
+                </Box>
             )}
 
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
                 <Button
                     variant="contained"
                     onClick={handleSendMessage}
@@ -171,7 +221,11 @@ const ChatHD = () => {
                     sx={{ marginRight: 2 }}
                 >
                     {loading ? (
-                        <CircularProgress size={24} color="inherit" />
+                        <CircularProgress
+                            size={24}
+                            background-color="white"
+                            color="success"
+                        />
                     ) : (
                         <IoMdSend />
                     )}
